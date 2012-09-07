@@ -28,11 +28,7 @@
 #include <sys/sysctl.h>
 
 
-#if defined(__linux__)
-  /* TODO: */
-#elif defined(__sun)
-  /* TODO: */
-#elif defined(__DragonFly__)  || \
+#if defined(__DragonFly__)  || \
       defined(__FreeBSD__)    || \
       defined(__OpenBSD__)    || \
       defined(__NetBSD__)     || \
@@ -41,13 +37,19 @@ static char *process_title;
 #endif
 
 
-uv_err_t uv__platform_set_process_title(const char* title) {
+char** uv__platform_setup_args(int argc, char** argv) {
+#if defined(__DragonFly__)  || \
+      defined(__FreeBSD__)    || \
+      defined(__OpenBSD__)    || \
+      defined(__NetBSD__)     || \
+      defined(__APPLE__)
+  process_title = argc ? strdup(argv[0]) : NULL;
+  return argv;
+#endif
+}
 
-#if defined(__linux__)
-  /* TODO: */
-#elif defined(__sun)
-  /* TODO: */
-#elif defined(__DragonFly__)  || \
+uv_err_t uv__platform_set_process_title(const char* title) {
+#if defined(__DragonFly__)  || \
       defined(__FreeBSD__)    || \
       defined(__OpenBSD__)    || \
       defined(__NetBSD__)     || \
@@ -59,6 +61,9 @@ uv_err_t uv__platform_set_process_title(const char* title) {
   }
   process_title = strdup(title);
 
+#if defined(__OpenBSD__)
+  /* TODO: should be refactored uv_set_process_title from openbsd.c */
+#else
   oid[0] = CTL_KERN;
   oid[1] = KERN_PROC;
 #if defined(__APPLE__)
@@ -74,6 +79,8 @@ uv_err_t uv__platform_set_process_title(const char* title) {
          NULL,
          process_title,
          strlen(process_title) + 1);
+#endif
+
 #endif
 
   return uv_ok_;

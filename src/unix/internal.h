@@ -167,6 +167,7 @@ void uv__signal_unregister(uv_loop_t* loop);
 /* platform specific */
 int uv__platform_loop_init(uv_loop_t* loop, int default_loop);
 void uv__platform_loop_delete(uv_loop_t* loop);
+char** uv__platform_setup_args(int argc, char** argv);
 uv_err_t uv__platform_set_process_title(const char* title);
 uv_err_t uv__platform_get_process_title(char* buffer, size_t size);
 

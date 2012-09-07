@@ -40,8 +40,6 @@
 #include <sys/sysctl.h>
 #include <unistd.h>  /* sysconf */
 
-static char *process_title;
-
 
 int uv__platform_loop_init(uv_loop_t* loop, int default_loop) {
   return 0;
@@ -148,8 +146,7 @@ void uv_loadavg(double avg[3]) {
 
 
 char** uv_setup_args(int argc, char** argv) {
-  process_title = argc ? strdup(argv[0]) : NULL;
-  return argv;
+  return uv__platform_setup_args(argc, argv);
 }
 
 
