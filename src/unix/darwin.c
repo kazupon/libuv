@@ -37,7 +37,6 @@
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <mach-o/dyld.h> /* _NSGetExecutablePath */
-#include <sys/resource.h>
 #include <sys/sysctl.h>
 #include <unistd.h>  /* sysconf */
 
@@ -155,39 +154,12 @@ char** uv_setup_args(int argc, char** argv) {
 
 
 uv_err_t uv_set_process_title(const char* title) {
-  int oid[4];
-
-  if (process_title) {
-    free(process_title);
-  }
-  process_title = strdup(title);
-
-  oid[0] = CTL_KERN;
-  oid[1] = KERN_PROC;
-  oid[2] = KERN_PROCARGS;
-  oid[3] = getpid();
-
-  sysctl(oid,
-         ARRAY_SIZE(oid),
-         NULL,
-         NULL,
-         process_title,
-         strlen(process_title) + 1);
-
-  return uv_ok_;
+  return uv__platform_set_process_title(title);
 }
 
 
 uv_err_t uv_get_process_title(char* buffer, size_t size) {
-  if (process_title) {
-    strncpy(buffer, process_title, size);
-  } else {
-    if (size > 0) {
-      buffer[0] = '\0';
-    }
-  }
-
-  return uv_ok_;
+  return uv__platform_get_process_title(buffer, size);
 }
 
 

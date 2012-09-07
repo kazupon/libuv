@@ -117,6 +117,7 @@
             'include/uv-private/uv-bsd.h',
             'src/unix/async.c',
             'src/unix/core.c',
+            'src/unix/platform.c',
             'src/unix/dl.c',
             'src/unix/eio/ecb.h',
             'src/unix/eio/eio.c',
